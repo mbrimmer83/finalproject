@@ -16,10 +16,10 @@ app.run(function($ionicPlatform, $rootScope) {
   });
   $rootScope.$on('$stateChangeStart',
   function(event, toState, toParams, fromState, fromParams, options){
-      // transitionTo() promise will be rejected with
-      // a 'transition prevented' error
-      console.log("The from state ", fromState);
-      console.log("The to state ", toState);
+    // transitionTo() promise will be rejected with
+    // a 'transition prevented' error
+    // console.log("The from state ", fromState);
+    // console.log("The to state ", toState);
   });
 });
 
@@ -43,39 +43,46 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   })
 
-  // .state('app.browse', {
-  //     url: '/browse',
-  //     views: {
-  //       'menuContent': {
-  //         templateUrl: 'templates/browse.html'
-  //       }
-  //     }
-  //   })
-    .state('app.home', {
-      url: '/home',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/home.html',
-          controller: 'HomeController'
-        }
+  .state('app.lotInfo', {
+    url: '/lotinfo',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/lotinfo.html',
+        controller: 'GeoController'
       }
-    });
+    }
+  })
 
-  // .state('app.single', {
-  //   url: '/playlist/:playlistId',
-  //   views: {
-  //     'menuContent': {
-  //       templateUrl: 'templates/playlists.html',
-  //       controller: 'PlaylistCtrl'
-  //     }
-  //   }
-  // });
+  .state('app.home', {
+    url: '/home',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/home.html',
+        controller: 'HomeController'
+      }
+    }
+  });
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
 });
 
+var API = 'http://localhost:8000';
+
+app.factory('backEnd', function($http) {
+  return {
+    getLotData: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/mobilelotdata',
+        data: data
+      });
+    }
+  };
+});
+
 app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
-  console.log($state.current);
+  // console.log($state.current);
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -141,14 +148,31 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
 app.controller('HomeController', function($scope) {
 });
 
-app.controller('GeoController', ['$scope', '$cordovaGeolocation',function($scope, $cordovaGeolocation) {
+app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $http, $ionicLoading, $location, $state) {
+  var coords = {};
   var positionOptions = {timeout: 10000, enableHighAccuracy: false};
+  $scope.selectedLot = { id: undefined};
+  var theLots;
+  $ionicLoading.show();
   $cordovaGeolocation.getCurrentPosition(positionOptions).then(function(position) {
-    var lat = position.coords.latitude;
-    var long = position.coords.longitude;
-    console.log("Latitude is ", lat);
-    console.log("Longitude is ", long);
-  }, function(err) {
+    coords = {
+      lat: position.coords.latitude,
+      long: position.coords.longitude
+    };
+    backEnd.getLotData(coords).then(function(res) {
+      $scope.lots = res.data.data;
+      theLots = res.data.data;
+      $ionicLoading.hide();
+    });
+  }).catch(function(err) {
     console.log(err);
   });
-}]);
+
+  $scope.lotSelect = function() {
+    $state.go('app.lotInfo');
+    var lot = theLots.filter(function(theLot) {
+      return theLot.id === $scope.selectedLot.id;
+    });
+    $scope.userSelectedLot = lot;
+  };
+});

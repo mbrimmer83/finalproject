@@ -1,5 +1,11 @@
 <ion-view view-title="Find Parking">
   <ion-content>
-    <h1>Find Parking</h1>
-  </ion-content>
+    <h1>Near By Lots</h1>
+    <form  name="selectLot" novalidate>
+      <ion-list>
+      <ion-radio type ="radio" ng-repeat="lot in lots" ng-value="{{lot.id}}" name="lotId" ng-model="selectedLot.id" ng-required="true">{{lot.name}}</ion-radio>
+    </ion-list>
+    <button class="button button-block button-positive my-button-css" type="submit" ng-click="lotSelect()" ng-disabled="selectLot.$invalid">Select Lot</button>
+  </form>
+</ion-content>
 </ion-view>
