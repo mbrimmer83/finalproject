@@ -1,0 +1,24 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Request Car</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeRequestCar()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="getCar()">
+      <div class="list">
+        <h4>Please select when you want your car</h4>
+        <ion-radio ng-model="requestCarData.when" ng-value="0">Now</ion-radio>
+        <ion-radio ng-model="requestCarData.when" ng-value="5">5 Minutes</ion-radio>
+        <ion-radio ng-model="requestCarData.when" ng-value="10">10 Minutes</ion-radio>
+        <ion-radio ng-model="requestCarData.when" ng-value="15">15 Minutes</ion-radio>
+        <h4>Would you like a notification when your car is ready?</h4>
+        <ion-checkbox ng-model="requestCarData.push">Notification</ion-checkbox>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Request Car</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>

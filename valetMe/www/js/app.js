@@ -63,6 +63,26 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   })
 
+  .state('app.checkout', {
+    url: '/checkout',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/checkout.html',
+        controller: 'CheckoutController'
+      }
+    }
+  })
+
+  .state('app.review', {
+    url: '/review',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/review.html',
+        controller: 'CheckoutController'
+      }
+    }
+  })
+
   .state('app.home', {
     url: '/home',
     views: {
@@ -85,6 +105,13 @@ app.factory('backEnd', function($http) {
       return $http({
         method: 'POST',
         url: API + '/mobilelotdata',
+        data: data
+      });
+    },
+    requestCar: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/requestcar',
         data: data
       });
     }
@@ -193,7 +220,10 @@ app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $
     var lot = theLots.filter(function(theLot) {
       return theLot.id === $scope.selectedLot.id;
     });
-    storeInfo.saveData(lot);
+    var theData = storeInfo.getData();
+    theData.lotInfo = lot[0];
+    console.log(theData);
+    storeInfo.saveData(theData);
   };
 });
 
@@ -212,6 +242,69 @@ app.controller('LotController', function($scope, storeInfo, $state) {
   };
 });
 
-app.controller('OptionsController', function($scope, storeInfo, $state){
-  
+app.controller('OptionsController', function($scope, storeInfo, $state, $ionicModal, $timeout, backEnd){
+
+  $scope.requestCarData = {};
+  $ionicModal.fromTemplateUrl('templates/requestcar.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+  $scope.closeRequestCar = function() {
+    $scope.modal.hide();
+  };
+  $scope.requestCar = function() {
+    $scope.modal.show();
+  };
+  $scope.getCar = function() {
+    console.log($scope.requestCarData);
+    var theData = storeInfo.getData();
+    theData.requestCarInfo = $scope.requestCarData;
+    console.log(theData);
+    storeInfo.saveData(theData);
+    backEnd.requestCar(theData);
+    $timeout(function() {
+      $scope.closeRequestCar();
+    }, 1000);
+    $state.go('app.checkout');
+  };
+
+  $scope.checkout = function() {
+    $state.go('app.checkout');
+  };
+
+});
+
+app.controller('CheckoutController', function($scope, $state, storeInfo, $http) {
+  $scope.payment = {amount: undefined};
+  var transactionData = storeInfo.getData();
+  var data = transactionData[0];
+  $scope.pay = function() {
+    console.log($scope.payment.amount);
+    var amount = $scope.payment.amount * 100;
+    var handler = StripeCheckout.configure({
+      key: 'pk_test_ISLIYCpMacLsF9M5isdQ5JiF',
+      locale: 'auto',
+      token: function(token) {
+        var tokenId = token.id;
+        return $http({
+          url: API + '/transaction',
+          method: 'POST',
+          data: {
+            amount: amount,
+            token: tokenId,
+            transaction: data
+          }
+        })
+        .then(function() {
+          $state.go('app.review');
+        });
+      }
+    });
+    handler.open({
+      name: 'Valet Me',
+      description: 'Use Test Card: 4242 4242 4242 4242',
+      amount: amount
+    });
+  };
 });
