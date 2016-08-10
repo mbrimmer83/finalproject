@@ -48,7 +48,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
     views: {
       'menuContent': {
         templateUrl: 'templates/lotinfo.html',
-        controller: 'GeoController'
+        controller: 'LotController'
+      }
+    }
+  })
+
+  .state('app.options', {
+    url: '/options',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/options.html',
+        controller: 'OptionsController'
       }
     }
   })
@@ -78,6 +88,16 @@ app.factory('backEnd', function($http) {
         data: data
       });
     }
+  };
+});
+
+app.service('storeInfo', function(){
+  this.lotInfoStorage = {};
+  this.saveData = function(data){
+    this.lotInfoStorage = data;
+  };
+  this.getData = function() {
+    return this.lotInfoStorage;
   };
 });
 
@@ -148,7 +168,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
 app.controller('HomeController', function($scope) {
 });
 
-app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $http, $ionicLoading, $location, $state) {
+app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $http, $ionicLoading, $location, $state, storeInfo) {
   var coords = {};
   var positionOptions = {timeout: 10000, enableHighAccuracy: false};
   $scope.selectedLot = { id: undefined};
@@ -173,6 +193,25 @@ app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $
     var lot = theLots.filter(function(theLot) {
       return theLot.id === $scope.selectedLot.id;
     });
-    $scope.userSelectedLot = lot;
+    storeInfo.saveData(lot);
   };
+});
+
+app.controller('LotController', function($scope, storeInfo, $state) {
+  var lot = storeInfo.getData();
+  $scope.userSelectedLot = lot;
+  $scope.ticket = {
+    ticketNumber: undefined
+  };
+
+  $scope.ticketStorage = function() {
+    var theData = storeInfo.getData();
+    theData.ticketNumber = $scope.ticket;
+    storeInfo.saveData(theData);
+    $state.go('app.options');
+  };
+});
+
+app.controller('OptionsController', function($scope, storeInfo, $state){
+  
 });

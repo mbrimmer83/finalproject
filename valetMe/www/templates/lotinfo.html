@@ -1,5 +1,28 @@
-<ion-view view-title="Lot Information">
+<ion-view>
   <ion-content>
-    <h1>Lot Information</h1>
+    <div class="lotBox" ng-repeat=" userLot in userSelectedLot">
+      {{userLot.name}}<br>
+      {{userLot.address}}, {{userLot.city}} {{userLot.zipcode}}
+    </div>
+    <div class="list">
+      <label class="item item-input">
+        <span class="input-label">Ticket Number</span>
+        <input type="text" name="ticket" ng-model="ticket.ticketNumber">
+      </label>
+        <div class="lotInfoHeader">
+          <h4>Please enter the number your ticket</h4>
+          <h5>Do not use spaces or symbols</h5>
+        </div>
+      <div class="homebox">
+        <button class="button button-block button-positive my-button-css" type="submit" ng-click="ticketStorage()">Submit Ticket</button>
+      </div>
+    </div>
+    <div class="lotInfoHeader">
+      <h4>Already have your car?</h4>
+      <h5>Pay or leave tip at checkout</h5>
+    </div>
+    <div class="homebox">
+      <button class="button button-block button-positive my-button-css" type="submit" ng-click="checkout()">Checkout</button>
+    </div>
   </ion-content>
 </ion-view>

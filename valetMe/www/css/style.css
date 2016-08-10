@@ -1,1 +1,43 @@
-/* Empty. Add your own CSS if you like */
+body {
+  font-family: Chalkduster;
+}
+.homebox {
+  background: #393939;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.my-button-css {
+  background-image: linear-gradient(0deg, #FF5A09 23%, #F3843E 67%);
+  border: 1px solid #979797;
+  font-family: Chalkduster;
+  font-size: 20px;
+  color: #FFFFFF;
+  max-width: 80%;
+}
+
+.lotheader {
+  text-align: center;
+  margin: 0 0 0 0;
+}
+
+h5.lotheader {
+  margin-bottom: 10px;
+}
+
+.lotBox {
+  font-size: 20px;
+  margin: 10 0 10 0;
+}
+
+.lotInfoHeader  {
+  text-align: center;
+  font-family: Chalkduster;
+}
+
+.checkoutBox {
+  margin-top: 10px;
+}
