@@ -278,7 +278,7 @@ app.controller('OptionsController', function($scope, storeInfo, $state, $ionicMo
 app.controller('CheckoutController', function($scope, $state, storeInfo, $http) {
   $scope.payment = {amount: undefined};
   var transactionData = storeInfo.getData();
-  var data = transactionData[0];
+  var data = transactionData;
   $scope.pay = function() {
     console.log($scope.payment.amount);
     var amount = $scope.payment.amount * 100;

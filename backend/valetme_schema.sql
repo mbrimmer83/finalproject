@@ -2,10 +2,7 @@ CREATE TABLE users (
   id serial PRIMARY KEY,
   email varchar,
   password varchar,
-  name varchar,
-  address varchar,
-  city varchar,
-  zipcode integer
+  name varchar
 );
 
 CREATE TABLE lots (
@@ -26,10 +23,7 @@ CREATE TABLE lot_users (
   company_name varchar,
   email varchar,
   password varchar,
-  name varchar,
-  address varchar,
-  city varchar,
-  zipcode integer
+  name varchar
 );
  CREATE TABLE transactions (
    id serial PRIMARY KEY,

@@ -13,9 +13,11 @@
     "cors": "^2.7.1",
     "express": "^4.14.0",
     "gps-distance": "0.0.4",
+    "my-bcrypt": "^1.0.2",
     "pg": "^6.0.3",
     "pg-pool": "^1.4.0",
     "pg-promise": "^5.2.7",
+    "socket.io": "^1.4.8",
     "stripe": "^4.9.0"
   }
 }

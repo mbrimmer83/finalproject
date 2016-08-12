@@ -1,0 +1,21 @@
+<div>
+  <h1>Socket IO Request Car Page</h1>
+</div>
+<div class="cars">
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Ticket Number</th>
+      <th>Leave Time</th>
+      <th>Push</th>
+      <th>Payment/Tip</th>
+    </tr>
+    <tr ng-repeat="car in cars">
+      <th>User Name</th>
+      <th>{{car.ticketNumber.ticketNumber}}</th>
+      <th>{{car.requestCarInfo.when}}</th>
+      <th>{{car.requestCarInfo.push}}</th>
+      <th>Payment/Tip</th>
+    </tr>
+  </table>
+</div>

@@ -1,0 +1,42 @@
+<div class="container-fluid">
+
+  <form class="loginbox">
+    <h2>Signup</h2>
+    <p class="text-center">You will login on the next page!</p>
+    <br>
+    <hr>
+    <div class="form-group">
+      <label for="exampleInputEmail1">Name</label>
+      <input ng-model="name" type="text" class="form-control" id="exampleInputName1" placeholder="Name">
+      <br>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputEmail1">Email: your email will be your username</label>
+      <input ng-model="username" type="text" class="form-control" id="exampleInputEmail1" placeholder="Email">
+      <br>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password:</label>
+      <input ng-model="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      <br>
+    </div>
+    <div class="form-group">
+      <p>Please select what type of account you would like.</p>
+      <p>If you do not own valet lots select standard user.</p>
+      <label class="radio-inline">
+      <input type="radio" ng-model="usertype" name="usertype" value="lotmanager">Lot Manager</label>
+      <br>
+      <label class="radio-inline">
+      <input type="radio" ng-model="usertype" name="usertype" value="lotuser">Standard User</label>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Company Name</label>
+      <input ng-model="company" type="text" class="form-control" id="exampleInputCompany1" placeholder="Company">
+      <br>
+    </div>
+    <div class="submitBtn">
+      <button type="submit" class="btn" ng-click="signUp()">Submit</button>
+    </div>
+  </form>
+
+</div>
