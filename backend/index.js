@@ -5,6 +5,7 @@ var distance = require('gps-distance');
 var app = express();
 var stripe = require('stripe')('sk_test_T8RSd0lfz4iE7qT93n7JT0Wh');
 var bcrypt = require('my-bcrypt');
+var randtoken = require('rand-token');
 //Socket.io requirements
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
