@@ -4,8 +4,9 @@ var cors = require('cors');
 var distance = require('gps-distance');
 var app = express();
 var stripe = require('stripe')('sk_test_T8RSd0lfz4iE7qT93n7JT0Wh');
-var bcrypt = require('my-bcrypt');
 var randtoken = require('rand-token');
+var bluebird = require('bluebird');
+var bcrypt = bluebird.promisifyAll(require('my-bcrypt'));
 //Socket.io requirements
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -42,50 +43,56 @@ app.post('/signup', function(req, res) {
 });
 
 // User login
-app.post('/userlogin', function(req, res) {
+app.post('/login', function(req, res) {
   var userInfo = req.body;
-  console.log(userInfo);
-  bycrpt.hash(userInfo.password, 10, function(err, hash) {
-    if (err) {
-      res.json({status: "failed"});
-      return;
+  var encryptedPassword;
+  var theUser;
+  var token;
+  db.one('select * from users where email = $1', [userInfo.username])
+  .catch(function(err) {
+    return null;
+  })
+  .then(function(user){
+    if (!user) {
+      return db.one('select * from lot_users where email = $1', [userInfo.username]);
+    } else {
+      return user;
+    }
+  }).then(function(user){
+    if (!user) {
+      throw new Error("User not found!");
     }
     else {
-      db.query('select * from users where users.email = $1', [req.body.email]).then(function(res, err){
-        if (err) {
-          res.json({status: "User not found!"});
-          return;
-        }
-        else {
-          console.log(res);
-        }
-      });
-      }
+      theUser = user;
+      return bcrypt.compareAsync(userInfo.password, user.password);
+    }
+  }).then(function(match){
+    if (match) {
+      token = randtoken.generate(64);
+      return token;
+    }
+    else {
+      throw new Error("Invalid username or password!");
+    }
+  }).then(function(token) {
+    if (theUser.company_name === undefined) {
+      console.log(theUser);
+      return db.query('insert into user_login_tokens values(default, $1, $2, default, default)', [theUser.id, token]);
+    } else {
+      return db.query('insert into lot_user_login_token values(default, $1, $2, default, default)', [theUser.id, token]);
+    }
+  }).then(function(){
+    res.json({
+      status: "Authentication verified!",
+      user: theUser,
+      token: token
     });
+  }).catch(function(err){
+    console.log("The error is", err);
+    return res.json(err);
   });
 });
 
-app.post('/managerlogin', function(req, res) {
-  var userInfo = req.body;
-  console.log(userInfo);
-  bcrypt.hash(userInfo.password, 10, function(err, hash) {
-      if (err) {
-        res.json(status: "Hash failed!");
-        return;
-      }
-      else {
-        db.query('select * from lot_users where lot_users.email = $1', {req.body.email}).then(function(res, err) {
-          if (err) {
-            res.json({status: "User not found!"});
-            return;
-          }
-          else {
-            console.log(res);
-          }
-        })
-      }
-  });
-});
 
 // Get the lots located within 5 miles of location.
 app.post('/mobilelotdata', function(req, res) {

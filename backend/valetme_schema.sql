@@ -46,3 +46,19 @@ CREATE TABLE vehicles (
   on_lot boolean,
   request_time timestamp default current_timestamp
 );
+
+CREATE TABLE user_login_tokens (
+  id serial PRIMARY KEY,
+  user_id  integer REFERENCES users (id)
+  token varchar,
+  login_time timestamp default current_timestamp,
+  token_expire timestamp default current_timestamp + interval '1 day'
+)
+
+CREATE TABLE lot_user_login_token (
+  id serial PRIMARY KEY,
+  lot_user_id integer REFERENCES lot_users (id),
+  token varchar,
+  login_time timestamp default current_timestamp,
+  token_expire timestamp default current_timestamp + interval '1 day'
+)

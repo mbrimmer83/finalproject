@@ -10,7 +10,7 @@ app.config(function($routeProvider) {
       controller: 'SocketController',
       templateUrl: '/html/lotsocket.html'
     })
-    .when('/userlogin', {
+    .when('/login', {
       controller: 'MainController',
       templateUrl: '/html/login.html'
     })
@@ -74,6 +74,13 @@ app.controller('MainController', function($scope, $http, $cookies, $location, ba
       username: $scope.username,
       password: $scope.password
     };
+    backEnd.getLogin(loginInfo).then(function(res){
+      $cookies.put('token', res.data.token);
+      $cookies.put('userId', res.data.user.id);
+      $location.path('/home');
+    }).catch(function(err){
+      console.log(err);
+    });
   };
 
 });
