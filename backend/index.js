@@ -65,6 +65,27 @@ app.post('/userlogin', function(req, res) {
   });
 });
 
+app.post('/managerlogin', function(req, res) {
+  var userInfo = req.body;
+  console.log(userInfo);
+  bcrypt.hash(userInfo.password, 10, function(err, hash) {
+      if (err) {
+        res.json(status: "Hash failed!");
+        return;
+      }
+      else {
+        db.query('select * from lot_users where lot_users.email = $1', {req.body.email}).then(function(res, err) {
+          if (err) {
+            res.json({status: "User not found!"});
+            return;
+          }
+          else {
+            console.log(res);
+          }
+        })
+      }
+  });
+});
 
 // Get the lots located within 5 miles of location.
 app.post('/mobilelotdata', function(req, res) {
