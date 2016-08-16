@@ -14,13 +14,20 @@ app.config(function($routeProvider) {
       controller: 'MainController',
       templateUrl: '/html/login.html'
     })
-    .when('/managerlogin', {
-      controller: 'MainController',
-      templateUrl: '/html/login.html'
-    })
     .when('/signup', {
       controller: 'MainController',
       templateUrl: '/html/signup.html'
+    });
+});
+
+app.run(function($rootScope, $location, $cookies) {
+    $rootScope.$on('$locationChangeStart', function(event, nextUrl, currentUrl) {
+      var token = $cookies.get('token');
+      nextUrl = nextUrl.split("/");
+      nextUrl = nextUrl[nextUrl.length - 1];
+      if (!token && (nextUrl ===)) {
+
+      }
     });
 });
 

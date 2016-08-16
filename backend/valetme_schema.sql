@@ -23,7 +23,8 @@ CREATE TABLE lot_users (
   company_name varchar,
   email varchar,
   password varchar,
-  name varchar
+  name varchar,
+  lot_manager boolean
 );
  CREATE TABLE transactions (
    id serial PRIMARY KEY,
