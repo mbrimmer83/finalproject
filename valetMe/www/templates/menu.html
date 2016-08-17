@@ -18,26 +18,35 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
+        <ion-item ng-show="logged" menu-close href="#/app/home">
+          Home
+        </ion-item>
+        <ion-item ng-hide="logged" menu-close ng-click="signup()">
+          Sign Up
+        </ion-item>
+        <ion-item ng-hide="logged" menu-close ng-click="login()">
           Login
         </ion-item>
-        <ion-item menu-close href="#/app/findParking">
+        <ion-item ng-show="logged" menu-close href="#/app/findParking">
           Find Parking
         </ion-item>
-        <ion-item menu-close href="#/app/options">
+        <ion-item ng-show="logged" menu-close href="#/app/options">
           Options
         </ion-item>
-        <ion-item menu-close href="#/app/getcar">
+        <ion-item ng-show="logged" menu-close href="#/app/getcar">
           Get Car
         </ion-item>
-        <ion-item menu-close href="#/app/checkout">
+        <ion-item ng-show="logged" menu-close href="#/app/checkout">
           Checkout
         </ion-item>
-        <ion-item menu-close href="#/app/review">
+        <ion-item ng-show="logged" menu-close href="#/app/review">
           Review Lot
         </ion-item>
-        <ion-item menu-close href="#/app/claim">
+        <ion-item  ng-show="logged" menu-close href="#/app/claim">
           Submit Claim
+        </ion-item>
+        <ion-item ng-show="logged" menu-close ng-click="logout()">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>

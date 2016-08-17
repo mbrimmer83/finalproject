@@ -1,6 +1,6 @@
-var app = angular.module('valetMe', ['ionic', 'ui.router', 'ngCordova']);
+var app = angular.module('valetMe', ['ionic', 'ui.router', 'ngCordova', 'ngStorage']);
 
-app.run(function($ionicPlatform, $rootScope) {
+app.run(function($ionicPlatform, $rootScope, $localStorage) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,6 +21,11 @@ app.run(function($ionicPlatform, $rootScope) {
     // console.log("The from state ", fromState);
     // console.log("The to state ", toState);
   });
+  if ($localStorage.token === undefined) {
+    $rootScope.logged = false;
+  } else {
+    $rootScope.logged = true;
+  }
 });
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -97,7 +102,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/app/home');
 });
 
-var API = 'http://localhost:8000';
+var API = 'http://7c61fa7f.ngrok.io';
 
 app.factory('backEnd', function($http) {
   return {
@@ -114,6 +119,20 @@ app.factory('backEnd', function($http) {
         url: API + '/requestcar',
         data: data
       });
+    },
+    getLogin: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/login',
+        data: data
+      });
+    },
+    getSignup: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/signup',
+        data: data
+      });
     }
   };
 });
@@ -126,42 +145,50 @@ app.service('storeInfo', function(){
   this.getData = function() {
     return this.lotInfoStorage;
   };
+  this.clearData = function(){
+    this.lotInfoStorage = {};
+  };
 });
 
-app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
-  // console.log($state.current);
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, backEnd, $localStorage, $rootScope) {
 
+  $scope.logout = function() {
+    console.log("Function called!");
+    $localStorage.$reset();
+    $rootScope.logged = false;
+    $state.go('app.home');
+  };
   // Form data for the login modal
   $scope.loginData = {};
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.modal = modal;
+    $scope.modal1 = modal;
   });
 
   $scope.closeLogin = function() {
-    $scope.modal.hide();
+    $scope.modal1.hide();
   };
 
   $scope.login = function() {
-    $scope.modal.show();
+    $scope.modal1.show();
   };
 
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
+    var login = {
+      username: $scope.loginData.email,
+      password: $scope.loginData.password,
+      usertype: 'lotuser'
+    };
+    backEnd.getLogin(login).then(function(res) {
+      console.log(res);
+      $localStorage.token = res.data.token;
+      $localStorage.user = res.data.user;
       $scope.closeLogin();
-    }, 1000);
+      $rootScope.logged = true;
+    });
   };
 
   // Form data for the sign up modal
@@ -170,25 +197,24 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
   $ionicModal.fromTemplateUrl('templates/signup.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.modal = modal;
+    $scope.modal2 = modal;
   });
 
   $scope.closeSignUp = function() {
-    $scope.modal.hide();
+    $scope.modal2.hide();
   };
 
   $scope.signup = function() {
-    $scope.modal.show();
+    $scope.modal2.show();
   };
   // Perform the login action when the user submits the login form
   $scope.doSignUp = function() {
     console.log('Doing Sign Up', $scope.signUpData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
+    var details = {
+      'email': $scope.signUpData.email,
+      'password': $scope.signUpData.password
+    };
       $scope.closeSignUp();
-    }, 1000);
   };
 });
 
@@ -275,7 +301,7 @@ app.controller('OptionsController', function($scope, storeInfo, $state, $ionicMo
 
 });
 
-app.controller('CheckoutController', function($scope, $state, storeInfo, $http) {
+app.controller('CheckoutController', function($scope, $state, storeInfo, $http, $ionicHistory) {
   $scope.payment = {amount: undefined};
   var transactionData = storeInfo.getData();
   var data = transactionData;
@@ -297,6 +323,8 @@ app.controller('CheckoutController', function($scope, $state, storeInfo, $http) 
           }
         })
         .then(function() {
+          storeInfo.clearData();
+          $ionicHistory.clearCache();
           $state.go('app.review');
         });
       }

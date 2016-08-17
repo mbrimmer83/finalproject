@@ -1,6 +1,21 @@
 <ion-view view-title="Home">
   <ion-content>
+    <div class="homebox" ng-hide="logged">
+        <button class="button button-block button-positive my-button-css" ng-click="login()">Login</button>
+    </div>
+    <div class="homebox" ng-hide="logged">
+        <button class="button button-block button-positive my-button-css" ng-click="signup()">Sign Up</button>
+    </div>
     <div class="homebox">
+      <ion-list>
+        <ion-item><h1>Welcome to Valet Me</h1></ion-item>
+        <ion-item>- Request your car</ion-item>
+        <ion-item>- Tip your valet</ion-item>
+        <ion-item>- Submit reviews</ion-item>
+        <ion-item>- Submit claims</ion-item>
+      </ion-list>
+    </div>
+    <div class="homebox" ng-show="logged">
         <button class="button button-block button-positive my-button-css" ui-sref="app.findParking">Find Parking</button>
     </div>
   </ion-content>

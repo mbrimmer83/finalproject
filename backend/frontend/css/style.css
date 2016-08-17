@@ -33,7 +33,10 @@ border: none;
 .navbar-inverse .navbar-brand:focus, .navbar-inverse .navbar-brand:hover {
   color: #393939;
 }
-
+.userBtns {
+  float: right;
+  margin: 2% 1%;
+}
 .col-xs-12 {
   padding: 0;
 }

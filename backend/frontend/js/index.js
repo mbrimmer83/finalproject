@@ -25,10 +25,21 @@ app.run(function($rootScope, $location, $cookies) {
       var token = $cookies.get('token');
       nextUrl = nextUrl.split("/");
       nextUrl = nextUrl[nextUrl.length - 1];
-      if (!token && (nextUrl ===)) {
-
+      if (!token && (nextUrl === "lotsocket" || nextUrl === "transactions")) {
+        $cookies.put('urlRedirect', nextUrl);
+        $location.path('/login');
+      }
+      if (!token) {
+        $rootScope.userButton = true;
+      } else {
+        $rootScope.userButton = false;
       }
     });
+    $rootScope.logout = function() {
+      $cookies.remove('token');
+      $rootScope.userButton = true;
+      $location.path('/');
+    };
 });
 
 app.factory('theSocket', function(socketFactory) {
@@ -84,6 +95,8 @@ app.controller('MainController', function($scope, $http, $cookies, $location, ba
     backEnd.getLogin(loginInfo).then(function(res){
       $cookies.put('token', res.data.token);
       $cookies.put('userId', res.data.user.id);
+      $cookies.put('email', res.data.user.email);
+      $cookies.put('name', res.data.user.name);
       $location.path('/home');
     }).catch(function(err){
       console.log(err);
