@@ -137,7 +137,6 @@ app.post('/transaction', function(req, res) {
       return;
     }
     db.query('insert into transactions values(default, $1, 1, default, $2, $3, $4)', [transactionData.id, transactionData.lot_type, req.body.amount, req.body.token]).then(function(res) {
-    console.log("Something happend!");
     res.json({status: "OK"});
     }).catch(function(err){
       console.log(err);
