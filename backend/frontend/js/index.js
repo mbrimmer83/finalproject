@@ -137,6 +137,13 @@ app.factory('backEnd', function($http) {
         data: data
       });
     },
+    getReviews: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/getreviews',
+        data: data
+      });
+    },
     getUserLots: function(data) {
       return $http({
         method: 'POST',
@@ -212,4 +219,11 @@ app.controller('PanelController', function($scope, theSocket, backEnd, $cookies,
     $scope.lots = res.data.data;
     console.log($scope.lots);
   });
+
+  $scope.getReviews = function() {
+    backEnd.getReviews($scope.lotData.lotId)
+    .then(function(res){
+      console.log(res);
+    });
+  };
 });

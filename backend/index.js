@@ -181,6 +181,7 @@ nsp.on('connection', function(socket) {
   });
 });
 
+// Insert reviews into database
 app.post('/review', function(req, res) {
   db.query('insert into reviews values(default, $1, $2, default, $3, $4, $5, $6, $7, $8)', [req.body.lotData.lotInfo.id, req.body.user.id, req.body.review.star, req.body.review.one, req.body.review.two, req.body.review.three,req.body.review.four,req.body.review.comments])
   .catch(function(err){
@@ -188,6 +189,18 @@ app.post('/review', function(req, res) {
   });
 });
 
+app.post('/getreviews', function(req, res) {
+  db.query('select review.lot_id, review.user_id, review.review_time, review.stars, review.car_promptly, review.valet_engage, review.valet_prof, review.park_again, review.comments, review.email, review.name from (select * from reviews left outer join users on users.id = reviews.user_id where reviews.lot_id = $1) as review', [req.body.id])
+  .then(function(res){
+    res.json({
+      status: "Ok",
+      data: res
+    });
+  })
+  .catch(function(err){
+    res.json({status: "Failed"});
+  });
+});
 
 // Listening for socket connections
 http.listen(8000, function() {
