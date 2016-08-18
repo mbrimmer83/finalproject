@@ -11,7 +11,7 @@
   <div class="container-fluid">
       <div class="row logo">
         <div class="col col-md-12 my-header">
-          <a ui-sref="app" class="my-header">Valet Me</a>
+          <a ui-sref="app.home" class="my-headerTitle">Valet Me</a>
           <a ui-sref="app.login"><button type="submit" class="btn userBtns" ng-show="userButton">Login</button></a>
           <a ui-sref="app.signup"><button type="submit" class="btn userBtns" ng-show="userButton">New User?</button></a>
           <!-- <h2 class="userBtns">Welcome, {{user}}!</h2> -->
@@ -31,15 +31,12 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a ui-sref="app" class="navbar-brand">Home</a>
+            <a ui-sref="app.home" class="navbar-brand">Home</a>
           </div>
           <!-- Collection of nav links, forms, and other content for toggling -->
           <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <!-- <li><a ui-sref="">Products</a></li> -->
               <li><a ui-sref="app.services">Services</a></li>
-              <!-- <li><a ui-sref="">Our Platform</a></li> -->
-              <!-- <li><a ui-sref="#about">About</a></li> -->
               <li><a ui-sref="app.story">Our story</a></li>
             </ul>
           </div>
@@ -47,11 +44,13 @@
       </div>
     </div>
     <div class="ui-view"></div>
-    <div class="col-xs-12">
-      <footer class="footer">
-        <h1>Footer</h1>
-      </footer>
-    </div>
+
+    <footer class="my-footer footer">
+      <div class="container">
+      <h1>Valet Me</h1>
+      </div>
+    </footer>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/angular.js"></script>
   <script src="js/socket.js"></script>

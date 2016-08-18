@@ -4,10 +4,13 @@
   background: #393939;
   height: 80px;
   font-family: Chalkduster;
+  font-size: 25px;
   color: white;
 }
-.my-header h1 {
+.my-headerTitle {
   padding-left: 15px;
+  padding-top: 15px;
+  color: white;
 }
 /* Navbar styling */
 
@@ -36,6 +39,11 @@ border: none;
 .userBtns {
   float: right;
   margin: 2% 1%;
+  color: white;
+}
+a:hover {
+  color: #FF5A09;
+  text-decoration: none;
 }
 .col-xs-12 {
   padding: 0;
@@ -67,6 +75,14 @@ table#t01 th {
 /* Footer styling */
 .my-footer {
   background: #393939;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-height: 15%;
+  text-align: center;
+  color: white;
+  font-family: Chalkduster;
+  font-size: 25px;
 }
 /* Administration panel */
 .adminBox {
@@ -93,4 +109,34 @@ table#t01 th {
 .adminBtn {
   margin-left: 20px;
   margin-top: 15px;
+  color: #333;
+}
+
+
+/* Home styling */
+.homeContentBox {
+  min-width: 30%;
+  max-width: 45%;
+  min-height: 500px;
+  background: #393939;
+  margin: 15px;
+  position: relative;
+  font-family: Chalkduster;
+  color: white;
+  text-align: center;
+}
+.boxImg {
+  max-width: 300px;
+  max-height: 400px;
+}
+
+.servicesContentBox {
+  min-width: 30%;
+  max-width: 45%;
+  min-height: 500px;
+  background: #393939;
+  margin: 15px;
+  position: relative;
+  font-family: Chalkduster;
+  color: white;
 }

@@ -5,31 +5,32 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
   .state('app', {
     url: '/',
+    abstract: true,
     templateUrl: 'html/main.html',
     controller: 'MainController'
   })
   .state('app.home', {
-    url: '/home',
+    url: 'home',
     templateUrl: 'html/home.html',
     controller: 'MainController'
   })
   .state('app.login', {
-    url: '/login',
+    url: 'login',
     templateUrl: 'html/login.html',
     controller: 'MainController'
   })
   .state('app.signup', {
-    url: '/signup',
+    url: 'signup',
     templateUrl: 'html/signup.html',
     controller: 'MainController'
   })
   .state('app.services', {
-    url: '/services',
+    url: 'services',
     templateUrl: 'html/services.html',
     controller: 'MainController'
   })
   .state('app.story', {
-    url: '/story',
+    url: 'story',
     templateUrl: 'html/story.html',
     controller: 'MainController'
   })
@@ -53,6 +54,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     templateUrl: 'html/transactions.html',
     controller: 'PanelStateController'
   });
+  $urlRouterProvider.otherwise('/home');
 });
 
 app.run(function($rootScope, $cookies, $state) {
