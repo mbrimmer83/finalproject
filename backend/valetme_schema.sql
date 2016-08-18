@@ -33,7 +33,9 @@ CREATE TABLE lot_users (
    transaction_time timestamp default current_timestamp,
    transaction_type varchar,
    transaction_amount varchar,
-   transaction_token varchar
+   transaction_token varchar,
+   ticket_number integer,
+   user_name varchar
  );
 
 CREATE TABLE vehicles (

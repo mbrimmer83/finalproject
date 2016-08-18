@@ -1,1 +1,17 @@
-<h1>transactions</h1>
+<h1>Transactions</h1>
+<div class="transactions">
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>TicketNumber</th>
+      <th>Time</th>
+      <th>Amount</th>
+    </tr>
+    <tr ng-repeat="transaction in transactions">
+      <th>{{transaction.user_name}}</th>
+      <th>{{transaction.ticket_number}}</th>
+      <th>{{transaction.transaction_time | date:'MM/dd/yyyy @ h:mma'}}</th>
+      <th>$ {{transaction.transaction_amount/100}}</th>
+    </tr>
+  </table>
+</div>

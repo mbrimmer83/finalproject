@@ -26,7 +26,6 @@ app.use(express.static('frontend'));
 // Signup
 app.post('/signup', function(req, res) {
   var userInfo = req.body;
-  console.log(userInfo);
   bcrypt.hash(userInfo.password, 10, function(err, hash){
     if (err) {
       res.json({status: "Failed"});
@@ -76,7 +75,6 @@ app.post('/login', function(req, res) {
     }
   }).then(function(token) {
     if (theUser.company_name === undefined) {
-      console.log(theUser);
       return db.query('insert into user_login_tokens values(default, $1, $2, default, default)', [theUser.id, token]);
     } else {
       return db.query('insert into lot_user_login_token values(default, $1, $2, default, default)', [theUser.id, token]);
@@ -94,7 +92,6 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/userlots', function(req, res) {
-  console.log(req.body.userId);
   db.query('select * from lots where lot_user_id = $1', [req.body.userId])
   .then(function(lots){
     res.json({
@@ -132,7 +129,6 @@ app.post('/mobilelotdata', function(req, res) {
 // Send Stripe token and save transaction in the database
 // Change user id when login and signup completed
 app.post('/transaction', function(req, res) {
-  console.log(req.body);
   var transactionData = req.body.transaction;
   var charge = stripe.charges.create({
     amount: req.body.amount,
@@ -148,7 +144,7 @@ app.post('/transaction', function(req, res) {
       });
       return;
     }
-    db.query('insert into transactions values(default, $1, 1, default, $2, $3, $4)', [transactionData.id, transactionData.lot_type, req.body.amount, req.body.token]).then(function(res) {
+    db.query('insert into transactions values(default, $1, $2, default, $3, $4, $5, $6, $7)', [transactionData.lotInfo.id, req.body.user.id, transactionData.lotInfo.lot_type, req.body.amount, req.body.token, transactionData.ticketNumber.ticketNumber, req.body.user.name]).then(function(res) {
     res.json({status: "OK"});
     }).catch(function(err){
       console.log(err);
@@ -156,8 +152,18 @@ app.post('/transaction', function(req, res) {
     });
   });
 });
+
+//Get transactions for frontend administration panel
+app.post('/lottransactions', function(req, res) {
+  db.query('select * from transactions where lot_id = $1 order by transaction_time DESC', [req.body.lotId])
+  .then(function(data){
+    return res.json({status: "OK", data: data});
+  }).catch(function(err){
+    return res.json({status: "Query failed!"});
+  });
+});
+
 // Request the user car to be returned to them
-// Change user id when login and signup completed
 app.post('/requestcar', function(req, res) {
   var data = req.body;
   var lotId = req.body.lotInfo.id;
@@ -165,22 +171,19 @@ app.post('/requestcar', function(req, res) {
     io.of('/custom-lot').emit(lotId, {data: res});
     }).catch(function(err){
       console.log(err);
-      res.json(err);
+      res.json({status: "Failed to socket request!"});
   });
 });
 
 // Socket connection
 nsp.on('connection', function(socket) {
-  console.log('A connection has been made!');
   socket.on('joinRoom', function(data){
-    console.log(data);
     socket.join(data);
   });
 });
 
 // Get return cars and send to frontend website
 app.post('/returncars', function(req, res) {
-  console.log(req.body);
   db.query('select * from vehicles where lot_id = $1 and on_lot = true', [req.body.lotId])
   .then(function(vehicles) {
     return res.json({data: vehicles});
@@ -190,6 +193,15 @@ app.post('/returncars', function(req, res) {
   });
 });
 
+//Remove car from active on lot status
+app.post('/removecars', function(req, res) {
+  db.query('update vehicles set on_lot = false where id = $1', [req.body.id])
+  .then(function(res){
+    return res.json({status: "OK"});
+  }).catch(function(err){
+    return res.json({status: "Failed to update!"});
+  });
+});
 // Insert reviews into database
 app.post('/review', function(req, res) {
   db.query('insert into reviews values(default, $1, $2, default, $3, $4, $5, $6, $7, $8)', [req.body.lotData.lotInfo.id, req.body.user.id, req.body.review.star, req.body.review.one, req.body.review.two, req.body.review.three,req.body.review.four,req.body.review.comments])
@@ -199,10 +211,8 @@ app.post('/review', function(req, res) {
 });
 
 app.post('/getreviews', function(req, res) {
-  console.log(req.body.lotId);
   db.query('select review.lot_id, review.user_id, review.review_time, review.stars, review.car_promptly, review.valet_engage, review.valet_prof, review.park_again, review.comments, review.email, review.name from (select * from reviews left outer join users on users.id = reviews.user_id where reviews.lot_id = $1 order by review_time DESC) as review', [req.body.lotId])
   .then(function(reviews){
-    console.log(reviews);
     res.json({
       data: reviews
     });

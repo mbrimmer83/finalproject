@@ -120,6 +120,20 @@ app.factory('backEnd', function($http) {
         data: data
       });
     },
+    removeCars: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/removecars',
+        data: data
+      });
+    },
+    getTransactions: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/lottransactions',
+        data: data
+      });
+    },
     getUserLots: function(data) {
       return $http({
         method: 'POST',
@@ -169,21 +183,6 @@ app.controller('MainController', function($scope, $http, $cookies, backEnd, $roo
 
 });
 
-// app.controller('SocketController', function($scope, theSocket) {
-//   var lotId = 5;
-//   var carArray = [];
-//   console.log("Controller active");
-//   console.log(theSocket);
-//   theSocket.on('connect', function(data){
-//     theSocket.emit('joinRoom', {data: lotId});
-//   });
-//   theSocket.on(lotId, function(data){
-//     console.log(data);
-//     carArray.push(data.data);
-//     $scope.cars = carArray;
-//   });
-// });
-
 app.controller('PanelController', function($scope, theSocket, backEnd, $cookies, $rootScope) {
   $rootScope.lotData = {
     lotId: undefined
@@ -203,38 +202,45 @@ app.controller('PanelController', function($scope, theSocket, backEnd, $cookies,
 app.controller('PanelStateController', function($scope, theSocket, backEnd, $cookies, $rootScope) {
   var carArray = [];
 
-  $scope.requestCar = function() {
+  $rootScope.requestCar = function() {
     theSocket.on('connect', function(data){
-      theSocket.emit('joinRoom', {data: $scope.lotdata.lotId});
+      theSocket.emit('joinRoom', {data: $rootScope.lotdata.lotId});
     });
     theSocket.on($scope.lotData.lotId, function(data){
       console.log(data);
-      carArray.push(data.data);
+      carArray.unshift(data.data);
       // $scope.cars = carArray;
     });
     backEnd.getReturnCars($scope.lotData)
     .then(function(res) {
+      carArray = [];
       for (var i = 0; i < res.data.data.length; i++) {
         carArray.push(res.data.data[i]);
       }
       $scope.cars = carArray;
-      console.log('carArray', carArray);
     });
   };
 
-  $scope.getReviews = function() {
-    backEnd.getReviews($scope.lotData)
+  $rootScope.getReviews = function() {
+    backEnd.getReviews($rootScope.lotData)
     .then(function(res){
       $scope.reviews = res.data.data;
     });
   };
 
-  $scope.returnCar = function(car) {
-    console.log(car);
-    console.log('carArray in returnCar', carArray);
-    // var carIndex = carArray.indexOf(this.id === car.id);
-    // var carObject = carArray[carIndex];
-    // console.log(carIndex);
-    // console.log("This is the car",carObject);
+  $rootScope.returnCar = function(car) {
+    var carIndex = carArray.map(function(x){return x.id; }).indexOf(car.id);
+    backEnd.removeCars(car)
+    .then(function(res) {
+      carArray.splice(carArray, 1);
+    });
+  };
+
+  $rootScope.getTransactions = function() {
+    backEnd.getTransactions($rootScope.lotData)
+    .then(function(res){
+      console.log(res.data.data);
+      $scope.transactions = res.data.data;
+    });
   };
 });

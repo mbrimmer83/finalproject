@@ -341,7 +341,7 @@ app.controller('OptionsController', function($scope, storeInfo, $state, $ionicMo
 
 });
 
-app.controller('CheckoutController', function($scope, $state, storeInfo, $http, flash, $timeout) {
+app.controller('CheckoutController', function($scope, $state, storeInfo, $http, flash, $timeout, $localStorage) {
   var lotInfo = storeInfo.getData();
   if (lotInfo.lotInfo === undefined) {
     $state.go('app.findParking');
@@ -364,7 +364,8 @@ app.controller('CheckoutController', function($scope, $state, storeInfo, $http, 
           data: {
             amount: amount,
             token: tokenId,
-            transaction: data
+            transaction: data,
+            user: $localStorage.user
           }
         })
         .then(function() {
