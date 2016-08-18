@@ -97,7 +97,6 @@ app.post('/userlots', function(req, res) {
   console.log(req.body.userId);
   db.query('select * from lots where lot_user_id = $1', [req.body.userId])
   .then(function(lots){
-    console.log(lots);
     res.json({
       data: lots
     });
@@ -162,13 +161,11 @@ app.post('/transaction', function(req, res) {
 app.post('/requestcar', function(req, res) {
   var data = req.body;
   var lotId = req.body.lotInfo.id;
-  io.of('/custom-lot').emit(lotId, {data: req.body});
-  console.log("Got past socket");
-  db.query('insert into vehicles values(default, $1, 1, $2, $3, $4, false, true, default)', [req.body.lotInfo.id, req.body.ticketNumber.ticketNumber, req.body.requestCarInfo.when, req.body.requestCarInfo.push]).then(function(res) {
-    res.json({status: "OK"}).catch(function(err){
+  db.one('insert into vehicles values(default, $1, 1, $2, $3, $4, false, true, default) RETURNING id, lot_id, user_id, ticket_number, time_needed, push, push_status, on_lot, request_time', [req.body.lotInfo.id, req.body.ticketNumber.ticketNumber, req.body.requestCarInfo.when, req.body.requestCarInfo.push]).then(function(res) {
+    io.of('/custom-lot').emit(lotId, {data: res});
+    }).catch(function(err){
       console.log(err);
       res.json(err);
-    });
   });
 });
 
@@ -181,6 +178,18 @@ nsp.on('connection', function(socket) {
   });
 });
 
+// Get return cars and send to frontend website
+app.post('/returncars', function(req, res) {
+  console.log(req.body);
+  db.query('select * from vehicles where lot_id = $1 and on_lot = true', [req.body.lotId])
+  .then(function(vehicles) {
+    return res.json({data: vehicles});
+  })
+  .catch(function(err){
+    return res.json({status: "Query Failed"});
+  });
+});
+
 // Insert reviews into database
 app.post('/review', function(req, res) {
   db.query('insert into reviews values(default, $1, $2, default, $3, $4, $5, $6, $7, $8)', [req.body.lotData.lotInfo.id, req.body.user.id, req.body.review.star, req.body.review.one, req.body.review.two, req.body.review.three,req.body.review.four,req.body.review.comments])
@@ -190,15 +199,17 @@ app.post('/review', function(req, res) {
 });
 
 app.post('/getreviews', function(req, res) {
-  db.query('select review.lot_id, review.user_id, review.review_time, review.stars, review.car_promptly, review.valet_engage, review.valet_prof, review.park_again, review.comments, review.email, review.name from (select * from reviews left outer join users on users.id = reviews.user_id where reviews.lot_id = $1) as review', [req.body.id])
-  .then(function(res){
+  console.log(req.body.lotId);
+  db.query('select review.lot_id, review.user_id, review.review_time, review.stars, review.car_promptly, review.valet_engage, review.valet_prof, review.park_again, review.comments, review.email, review.name from (select * from reviews left outer join users on users.id = reviews.user_id where reviews.lot_id = $1 order by review_time DESC) as review', [req.body.lotId])
+  .then(function(reviews){
+    console.log(reviews);
     res.json({
-      status: "Ok",
-      data: res
+      data: reviews
     });
   })
   .catch(function(err){
     res.json({status: "Failed"});
+    console.log(err);
   });
 });
 

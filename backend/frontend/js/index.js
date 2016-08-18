@@ -1,36 +1,5 @@
 var app = angular.module('valet-me', ['ui.router', 'btford.socket-io', 'ngCookies']);
 
-// app.config(function($routeProvider) {
-//   $routeProvider
-//     .when('/', {
-//       controller: 'MainController',
-//       templateUrl: '/html/home.html'
-//     })
-//     .when('/lotsocket', {
-//       controller: 'SocketController',
-//       templateUrl: '/html/lotsocket.html'
-//     })
-//     .when('/story', {
-//       controller: 'MainController',
-//       templateUrl: '/html/story.html'
-//     })
-//     .when('/login', {
-//       controller: 'MainController',
-//       templateUrl: '/html/login.html'
-//     })
-//     .when('/services', {
-//       controller: 'MainController',
-//       templateUrl: '/html/services.html'
-//     })
-//     .when('/panel', {
-//       controller: 'PanelController',
-//       templateUrl: '/html/panel.html'
-//     })
-//     .when('/signup', {
-//       controller: 'MainController',
-//       templateUrl: '/html/signup.html'
-//     });
-// });
 
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
@@ -72,17 +41,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
   .state('panel.active', {
     url: '/panel/active',
     templateUrl: 'html/active.html',
-    controller: 'SocketController'
+    controller: 'PanelStateController'
   })
   .state('panel.reviews', {
     url: '/panel/reviews',
-    templateUrl: 'html/reviews',
-    controller: 'PanelController'
+    templateUrl: 'html/reviews.html',
+    controller: 'PanelStateController'
   })
   .state('panel.transactions', {
     url: '/panel/transactions',
-    templateUrl: 'html/transactions',
-    controller: 'PanelController'
+    templateUrl: 'html/transactions.html',
+    controller: 'PanelStateController'
   });
 });
 
@@ -144,6 +113,13 @@ app.factory('backEnd', function($http) {
         data: data
       });
     },
+    getReturnCars: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/returncars',
+        data: data
+      });
+    },
     getUserLots: function(data) {
       return $http({
         method: 'POST',
@@ -193,25 +169,27 @@ app.controller('MainController', function($scope, $http, $cookies, backEnd, $roo
 
 });
 
-app.controller('SocketController', function($scope, theSocket) {
-  var lotId = 5;
-  var carArray = [];
-  console.log("Controller active");
-  console.log(theSocket);
-  theSocket.on('connect', function(data){
-    theSocket.emit('joinRoom', {data: lotId});
-  });
-  theSocket.on(lotId, function(data){
-    console.log(data);
-    carArray.push(data.data);
-    $scope.cars = carArray;
-  });
-});
+// app.controller('SocketController', function($scope, theSocket) {
+//   var lotId = 5;
+//   var carArray = [];
+//   console.log("Controller active");
+//   console.log(theSocket);
+//   theSocket.on('connect', function(data){
+//     theSocket.emit('joinRoom', {data: lotId});
+//   });
+//   theSocket.on(lotId, function(data){
+//     console.log(data);
+//     carArray.push(data.data);
+//     $scope.cars = carArray;
+//   });
+// });
 
-app.controller('PanelController', function($scope, theSocket, backEnd, $cookies, $timeout) {
-  $scope.lotData = {
+app.controller('PanelController', function($scope, theSocket, backEnd, $cookies, $rootScope) {
+  $rootScope.lotData = {
     lotId: undefined
   };
+
+  $scope.userName = $cookies.get('name');
   var userId = $cookies.get('userId');
   var data = {userId: userId};
   backEnd.getUserLots(data)
@@ -220,10 +198,43 @@ app.controller('PanelController', function($scope, theSocket, backEnd, $cookies,
     console.log($scope.lots);
   });
 
-  $scope.getReviews = function() {
-    backEnd.getReviews($scope.lotData.lotId)
-    .then(function(res){
-      console.log(res);
+});
+
+app.controller('PanelStateController', function($scope, theSocket, backEnd, $cookies, $rootScope) {
+  var carArray = [];
+
+  $scope.requestCar = function() {
+    theSocket.on('connect', function(data){
+      theSocket.emit('joinRoom', {data: $scope.lotdata.lotId});
     });
+    theSocket.on($scope.lotData.lotId, function(data){
+      console.log(data);
+      carArray.push(data.data);
+      // $scope.cars = carArray;
+    });
+    backEnd.getReturnCars($scope.lotData)
+    .then(function(res) {
+      for (var i = 0; i < res.data.data.length; i++) {
+        carArray.push(res.data.data[i]);
+      }
+      $scope.cars = carArray;
+      console.log('carArray', carArray);
+    });
+  };
+
+  $scope.getReviews = function() {
+    backEnd.getReviews($scope.lotData)
+    .then(function(res){
+      $scope.reviews = res.data.data;
+    });
+  };
+
+  $scope.returnCar = function(car) {
+    console.log(car);
+    console.log('carArray in returnCar', carArray);
+    // var carIndex = carArray.indexOf(this.id === car.id);
+    // var carObject = carArray[carIndex];
+    // console.log(carIndex);
+    // console.log("This is the car",carObject);
   };
 });

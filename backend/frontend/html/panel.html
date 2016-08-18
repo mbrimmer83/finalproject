@@ -1,10 +1,18 @@
 <div class="container adminBox">
-    <div class="row">
-      <span>Administration Panel</span>
-      <label for="lots">Select Lot</label>
+  <div class="row">
+    <span class="adminTitle"> Lot Administration Panel</span>
+    <span class="adminUserName">Welcome {{userName}}</span>
+    <span class="adminSelect">
+      <label for="lots">Please a select Lot</label>
       <select name="lots" ng-model="lotData.lotId">
         <option ng-repeat="lot in lots" ng-value="lot.id">{{lot.name}}</option>
       </select>
-    </div>
+    </span>
+  </div>
+  <div class="row">
+    <a ui-sref="panel.active"><button ng-click="requestCar()" class="btn adminBtn">Lot Vehicles</button></a>
+    <a ui-sref="panel.reviews"><button ng-click="getReviews()" class="btn adminBtn">Reviews</button></a>
+    <a ui-sref="panel.transactions"><button ng-click="getTransactions()" class="btn adminBtn">Transactions</button></a>
+  </div>
 </div>
 <div class="ui-view"></div>

@@ -68,10 +68,29 @@ table#t01 th {
 .my-footer {
   background: #393939;
 }
-
+/* Administration panel */
 .adminBox {
   position: relative;
-  min-height: 200px;
+  min-height: 100px;
   width: 80%;
   background: #d3d3d3;
+  padding-top: 10px;
+}
+ .adminTitle {
+   font-size: 20px;
+   margin-left: 10px;
+ }
+.adminSelect {
+  float: right;
+  font-size: 20px;
+  margin-right: 10px;
+}
+.adminUserName {
+  font-size: 20px;
+  position: absolute;
+  left: 40%;
+}
+.adminBtn {
+  margin-left: 20px;
+  margin-top: 15px;
 }

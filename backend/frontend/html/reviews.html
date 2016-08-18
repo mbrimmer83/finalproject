@@ -1,0 +1,27 @@
+<h1>Reviews</h1>
+<div class="cars">
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Review Time</th>
+      <th>Stars</th>
+      <th>Was car return promptly</th>
+      <th>Was valet professional</th>
+      <th>Did valet engage</th>
+      <th>Would they park again</th>
+      <th>Comments</th>
+    </tr>
+    <tr ng-repeat="review in reviews">
+      <th>{{review.name}}</th>
+      <th>{{review.email}}</th>
+      <th>{{review.review_time | date:'MM/dd/yyyy @ h:mma'}}</th>
+      <th>{{review.stars}}</th>
+      <th>{{review.car_promptly}}</th>
+      <th>{{review.valet_prof}}</th>
+      <th>{{review.valet_engage}}</th>
+      <th>{{review.park_again}}</th>
+      <th>{{review.comments}}</th>
+    </tr>
+  </table>
+</div>
