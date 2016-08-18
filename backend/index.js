@@ -33,10 +33,10 @@ app.post('/signup', function(req, res) {
       return;
     }
     else if (req.body.usertype === 'lotuser') {
-      db.query('insert into users values(default, $1, $2, $3)', [req.body.username, hash, req.body.name]);
+      db.query('insert into users values(default, $1, $2, $3, default)', [req.body.username, hash, req.body.name]);
     }
     else if (req.body.usertype === 'lotmanager') {
-      db.query('insert into lot_users values(default, $1, $2, $3, $4)', [req.body.company, req.body.username, hash, req.body.name]);
+      db.query('insert into lot_users values(default, $1, $2, $3, $4, default)', [req.body.company, req.body.username, hash, req.body.name]);
     }
     res.json({status: "OK"});
   });
@@ -93,6 +93,19 @@ app.post('/login', function(req, res) {
   });
 });
 
+app.post('/userlots', function(req, res) {
+  console.log(req.body.userId);
+  db.query('select * from lots where lot_user_id = $1', [req.body.userId])
+  .then(function(lots){
+    console.log(lots);
+    res.json({
+      data: lots
+    });
+  })
+  .catch(function(err){
+    return res.json({status: "No lots found!"});
+  });
+});
 
 // Get the lots located within 5 miles of location.
 app.post('/mobilelotdata', function(req, res) {
@@ -147,10 +160,8 @@ app.post('/transaction', function(req, res) {
 // Request the user car to be returned to them
 // Change user id when login and signup completed
 app.post('/requestcar', function(req, res) {
-  console.log("This is the data ",req.body);
   var data = req.body;
   var lotId = req.body.lotInfo.id;
-  console.log(lotId);
   io.of('/custom-lot').emit(lotId, {data: req.body});
   console.log("Got past socket");
   db.query('insert into vehicles values(default, $1, 1, $2, $3, $4, false, true, default)', [req.body.lotInfo.id, req.body.ticketNumber.ticketNumber, req.body.requestCarInfo.when, req.body.requestCarInfo.push]).then(function(res) {
@@ -170,7 +181,12 @@ nsp.on('connection', function(socket) {
   });
 });
 
-
+app.post('/review', function(req, res) {
+  db.query('insert into reviews values(default, $1, $2, default, $3, $4, $5, $6, $7, $8)', [req.body.lotData.lotInfo.id, req.body.user.id, req.body.review.star, req.body.review.one, req.body.review.two, req.body.review.three,req.body.review.four,req.body.review.comments])
+  .catch(function(err){
+    return res.json({status: "Failed to query database!"});
+  });
+});
 
 
 // Listening for socket connections

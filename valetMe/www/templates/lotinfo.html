@@ -1,4 +1,4 @@
-<ion-view>
+<ion-view view-title="Lot Information">
   <ion-content>
     <div class="lotBox" ng-repeat=" userLot in userSelectedLot">
       {{userLot.name}}<br>
@@ -23,6 +23,13 @@
     </div>
     <div class="homebox">
       <button class="button button-block button-positive my-button-css" type="submit" ng-click="checkout()">Checkout</button>
+    </div>
+    <div class="lotInfoHeader">
+      <h4>Leave feedback</h4>
+      <h5>Tell us how we are doing</h5>
+    </div>
+    <div class="homebox">
+      <button class="button button-block button-positive my-button-css" type="submit" ui-sref="app.review">Review</button>
     </div>
   </ion-content>
 </ion-view>

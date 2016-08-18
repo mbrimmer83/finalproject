@@ -11,11 +11,12 @@
   <div class="container-fluid">
       <div class="row logo">
         <div class="col col-md-12 my-header">
-          <a href="#/" class="my-header">Valet Me</a>
-          <a href="#/login"><button type="submit" class="btn userBtns" ng-show="userButton">Login</button></a>
-          <a href="#/signup"><button type="submit" class="btn userBtns" ng-show="userButton">New User?</button></a>
+          <a ui-sref="app" class="my-header">Valet Me</a>
+          <a ui-sref="app.login"><button type="submit" class="btn userBtns" ng-show="userButton">Login</button></a>
+          <a ui-sref="app.signup"><button type="submit" class="btn userBtns" ng-show="userButton">New User?</button></a>
           <!-- <h2 class="userBtns">Welcome, {{user}}!</h2> -->
           <a ng-click="logout()"><button type="submit" class="btn userBtns" ng-hide="userButton">Logout</button></a>
+          <a ui-sref="panel"><button class="btn userBtns" ng-hide="userButton">User Panel</button></a>
         </div>
       </div>
     </div>
@@ -30,40 +31,31 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a href="/" class="navbar-brand">Home</a>
+            <a ui-sref="app" class="navbar-brand">Home</a>
           </div>
           <!-- Collection of nav links, forms, and other content for toggling -->
           <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li><a href="">Products</a></li>
-              <li><a href="">Services</a></li>
-              <li><a href="">Our Platform</a></li>
-              <!-- <li><a href="#about">About</a></li> -->
-              <li><a href="">Our story</a></li>
+              <!-- <li><a ui-sref="">Products</a></li> -->
+              <li><a ui-sref="app.services">Services</a></li>
+              <!-- <li><a ui-sref="">Our Platform</a></li> -->
+              <!-- <li><a ui-sref="#about">About</a></li> -->
+              <li><a ui-sref="app.story">Our story</a></li>
             </ul>
-            <!-- social media icons -->
-            <div class="social">
-              <ul>
-                <li><a href="https://www.facebook.com/matthew.brimmer.9"><i class="fa fa-lg fa-facebook"></i></a></li>
-                <li><a href="https://github.com/mbrimmer83"><i class="fa fa-lg fa-github"></i></a></li>
-                <li><a href="https://www.linkedin.com/in/matthew-brimmer-5b3342bb"><i class="fa fa-lg fa-linkedin"></i></a></li>
-              </ul>
-            </div>
           </div>
         </nav>
       </div>
     </div>
-    <ng-view></ng-view>
+    <div class="ui-view"></div>
     <div class="col-xs-12">
       <footer class="footer">
         <h1>Footer</h1>
       </footer>
     </div>
-  </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/angular.js"></script>
   <script src="js/socket.js"></script>
-  <script src="js/angular-route.js"></script>
+  <script src="js/angular-ui-router.min.js"></script>
   <script src="js/angular-cookies.js"></script>
   <script src="js/index.js"></script>
 </body>

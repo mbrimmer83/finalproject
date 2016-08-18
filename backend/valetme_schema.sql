@@ -63,3 +63,16 @@ CREATE TABLE lot_user_login_token (
   login_time timestamp default current_timestamp,
   token_expire timestamp default current_timestamp + interval '1 day'
 )
+
+CREATE TABLE reviews (
+  id serial PRIMARY KEY,
+  lot_id integer REFERENCES lots (id),
+  user_id integer REFERENCES users (id),
+  review_time timestamp default current_timestamp,
+  stars integer,
+  car_promptly boolean,
+  valet_prof boolean,
+  valet_engage boolean,
+  park_again boolean,
+  comments varchar
+)

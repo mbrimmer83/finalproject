@@ -33,17 +33,14 @@
         <ion-item ng-show="logged" menu-close href="#/app/options">
           Options
         </ion-item>
-        <ion-item ng-show="logged" menu-close href="#/app/getcar">
-          Get Car
+        <ion-item ng-show="logged" menu-close ng-click="getCar()">
+          Request Car
         </ion-item>
         <ion-item ng-show="logged" menu-close href="#/app/checkout">
           Checkout
         </ion-item>
         <ion-item ng-show="logged" menu-close href="#/app/review">
           Review Lot
-        </ion-item>
-        <ion-item  ng-show="logged" menu-close href="#/app/claim">
-          Submit Claim
         </ion-item>
         <ion-item ng-show="logged" menu-close ng-click="logout()">
           Logout

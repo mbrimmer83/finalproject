@@ -68,3 +68,10 @@ table#t01 th {
 .my-footer {
   background: #393939;
 }
+
+.adminBox {
+  position: relative;
+  min-height: 200px;
+  width: 80%;
+  background: #d3d3d3;
+}

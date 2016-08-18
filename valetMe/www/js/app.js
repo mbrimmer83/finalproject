@@ -83,7 +83,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
     views: {
       'menuContent': {
         templateUrl: 'templates/review.html',
-        controller: 'CheckoutController'
+        controller: 'ReviewController'
+      }
+    }
+  })
+
+  .state('app.thanks', {
+    url: '/thanks',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/thanks.html',
+        controller: 'ThanksController'
       }
     }
   })
@@ -127,6 +137,13 @@ app.factory('backEnd', function($http) {
         data: data
       });
     },
+    submitReview: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/review',
+        data: data
+      });
+    },
     getSignup: function(data) {
       return $http({
         method: 'POST',
@@ -147,6 +164,18 @@ app.service('storeInfo', function(){
   };
   this.clearData = function(){
     this.lotInfoStorage = {};
+  };
+});
+
+app.factory('flash', function($rootScope, $timeout) {
+  function setMessage(message) {
+    $rootScope.flashMessage = message;
+    $timeout(function () {
+      $rootScope.flashMessage = null;
+    }, 5000);
+  }
+  return {
+    setMessage: setMessage
   };
 });
 
@@ -221,7 +250,7 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, backEn
 app.controller('HomeController', function($scope) {
 });
 
-app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $http, $ionicLoading, $location, $state, storeInfo) {
+app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $http, $ionicLoading, $location, $state, storeInfo, $ionicHistory, $window) {
   var coords = {};
   var positionOptions = {timeout: 10000, enableHighAccuracy: false};
   $scope.selectedLot = { id: undefined};
@@ -251,6 +280,13 @@ app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $
     console.log(theData);
     storeInfo.saveData(theData);
   };
+
+  $scope.reset = function() {
+    console.log("This happened!");
+    $window.location.reload(true);
+    $ionicHistory.clearCache();
+    storeInfo.clearData();
+  };
 });
 
 app.controller('LotController', function($scope, storeInfo, $state) {
@@ -268,8 +304,12 @@ app.controller('LotController', function($scope, storeInfo, $state) {
   };
 });
 
-app.controller('OptionsController', function($scope, storeInfo, $state, $ionicModal, $timeout, backEnd){
-
+app.controller('OptionsController', function($scope, storeInfo, $state, $ionicModal, $timeout, backEnd, flash){
+  var lotInfo = storeInfo.getData();
+  if (lotInfo.lotInfo === undefined) {
+    $state.go('app.findParking');
+    flash.setMessage('Please select your current lot before exploring options!');
+  }
   $scope.requestCarData = {};
   $ionicModal.fromTemplateUrl('templates/requestcar.html', {
     scope: $scope
@@ -301,7 +341,12 @@ app.controller('OptionsController', function($scope, storeInfo, $state, $ionicMo
 
 });
 
-app.controller('CheckoutController', function($scope, $state, storeInfo, $http, $ionicHistory) {
+app.controller('CheckoutController', function($scope, $state, storeInfo, $http, flash, $timeout) {
+  var lotInfo = storeInfo.getData();
+  if (lotInfo.lotInfo === undefined) {
+    $state.go('app.findParking');
+    flash.setMessage('Please select your current lot before checking out!');
+  }
   $scope.payment = {amount: undefined};
   var transactionData = storeInfo.getData();
   var data = transactionData;
@@ -323,8 +368,6 @@ app.controller('CheckoutController', function($scope, $state, storeInfo, $http, 
           }
         })
         .then(function() {
-          storeInfo.clearData();
-          $ionicHistory.clearCache();
           $state.go('app.review');
         });
       }
@@ -335,4 +378,42 @@ app.controller('CheckoutController', function($scope, $state, storeInfo, $http, 
       amount: amount
     });
   };
+});
+
+app.controller('ReviewController',function($scope, backEnd, storeInfo, $state, flash, $timeout, $localStorage) {
+  var lotInfo = storeInfo.getData();
+  if (lotInfo.lotInfo === undefined) {
+    $state.go('app.findParking');
+    flash.setMessage('Please select your current lot before reviewing!');
+  }
+  $scope.review = {
+    star: undefined,
+    one: false,
+    two: false,
+    three: false,
+    four: false,
+    comments: undefined
+  };
+
+  $scope.reviewLot = function() {
+    console.log($scope.review);
+    var data = {
+      review: $scope.review,
+      lotData: lotInfo,
+      user: $localStorage.user,
+      token: $localStorage.token
+    };
+    backEnd.submitReview(data)
+    .then(function(res) {
+    });
+    $state.go('app.thanks');
+  };
+});
+
+app.controller('ThanksController', function($scope, $state, $timeout, storeInfo, $ionicHistory) {
+  $timeout(function () {
+    $state.go('app.home');
+    storeInfo.clearData();
+    $ionicHistory.clearCache();
+  }, 4000);
 });
