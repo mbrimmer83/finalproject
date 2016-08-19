@@ -27,7 +27,7 @@ var db = pgp({
 db.connect();
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('frontend'));
+app.use(express.static(__dirname + '/frontend'));
 
 // Signup
 app.post('/signup', function(req, res) {
