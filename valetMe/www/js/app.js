@@ -112,7 +112,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/app/home');
 });
 
-var API = 'http://7c61fa7f.ngrok.io';
+var API = 'http://ec33e1bb.ngrok.io';
 
 app.factory('backEnd', function($http) {
   return {

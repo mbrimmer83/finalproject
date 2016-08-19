@@ -7,6 +7,7 @@ var stripe = require('stripe')('sk_test_T8RSd0lfz4iE7qT93n7JT0Wh');
 var randtoken = require('rand-token');
 var bluebird = require('bluebird');
 var bcrypt = bluebird.promisifyAll(require('my-bcrypt'));
+require('dotenv').config();
 //Socket.io requirements
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -15,7 +16,12 @@ var nsp = io.of('/custom-lot');
 // Database requirements
 var pgp = require('pg-promise')();
 var db = pgp({
-  database: 'valetMe'
+    database: process.env.DBNAME,
+    host: process.env.DBHOST,
+    port: process.env.DBPORT,
+    user: process.env.DBUSER,
+    password: process.env.DBPASS,
+    ssl: true
 });
 
 db.connect();

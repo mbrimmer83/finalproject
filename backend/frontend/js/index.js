@@ -5,7 +5,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
   .state('app', {
     url: '/',
-    abstract: true,
     templateUrl: 'html/main.html',
     controller: 'MainController'
   })
@@ -90,7 +89,8 @@ app.factory('theSocket', function(socketFactory) {
 
 });
 
-var API = 'http://7c61fa7f.ngrok.io';
+var API = 'valetmeserver.herokuapp.com';
+
 
 app.factory('backEnd', function($http) {
   return {
@@ -186,6 +186,7 @@ app.controller('MainController', function($scope, $http, $cookies, backEnd, $roo
 });
 
 app.controller('PanelController', function($scope, theSocket, backEnd, $cookies, $rootScope) {
+  console.log("PanelController active!");
   $rootScope.lotData = {
     lotId: undefined
   };
