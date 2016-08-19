@@ -230,6 +230,8 @@ app.post('/getreviews', function(req, res) {
 });
 
 // Listening for socket connections
-http.listen(8000, function() {
-  console.log("Listening on port 8000!");
+var port = process.env.PORT || 8000;
+
+http.listen(port, function() {
+  console.log("Listening on port " + port + "!");
 });
