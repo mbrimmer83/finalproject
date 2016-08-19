@@ -60,11 +60,11 @@ app.run(function($rootScope, $cookies, $state) {
     $rootScope.$on('$locationChangeStart', function(event, nextUrl, currentUrl) {
       nextUrl = nextUrl.split("/");
       nextUrl = nextUrl[nextUrl.length - 1];
-      if (!token && (nextUrl === "lotsocket" || nextUrl === "transactions")) {
-        $cookies.put('urlRedirect', nextUrl);
-        // $location.path('/login');
-        $state.go('app.login');
-      }
+      // if (!token && (nextUrl === "lotsocket" || nextUrl === "transactions")) {
+      //   $cookies.put('urlRedirect', nextUrl);
+      //   // $location.path('/login');
+      //   $state.go('app.login');
+      // }
       var token = $cookies.get('token');
       if (!token) {
         $rootScope.userButton = true;
