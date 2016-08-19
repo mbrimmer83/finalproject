@@ -75,7 +75,7 @@ table#t01 th {
 /* Footer styling */
 .my-footer {
   background: #393939;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   min-height: 15%;

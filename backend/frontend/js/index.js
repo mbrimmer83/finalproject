@@ -65,13 +65,14 @@ app.run(function($rootScope, $cookies, $state) {
         // $location.path('/login');
         $state.go('app.login');
       }
+      var token = $cookies.get('token');
+      if (!token) {
+        $rootScope.userButton = true;
+      } else {
+        $rootScope.userButton = false;
+      }
     });
-    var token = $cookies.get('token');
-    if (!token) {
-      $rootScope.userButton = true;
-    } else {
-      $rootScope.userButton = false;
-    }
+
     $rootScope.logout = function() {
       $cookies.remove('token');
       $cookies.remove('userid');
