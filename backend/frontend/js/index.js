@@ -89,7 +89,7 @@ app.factory('theSocket', function(socketFactory) {
 
 });
 
-var API = 'https://floating-castle-43284.herokuapp.com/';
+var API = 'https://floating-castle-43284.herokuapp.com';
 
 
 app.factory('backEnd', function($http) {
