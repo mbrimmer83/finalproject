@@ -112,7 +112,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/app/home');
 });
 
-var API = 'http://ec33e1bb.ngrok.io';
+var API = 'https://floating-castle-43284.herokuapp.com/';
 
 app.factory('backEnd', function($http) {
   return {
