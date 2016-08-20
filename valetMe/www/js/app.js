@@ -112,7 +112,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/app/home');
 });
 
-var API = 'https://floating-castle-43284.herokuapp.com/';
+var API = 'https://floating-castle-43284.herokuapp.com';
 
 app.factory('backEnd', function($http) {
   return {
