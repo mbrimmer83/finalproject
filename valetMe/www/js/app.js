@@ -199,7 +199,6 @@ app.factory('flash', function($rootScope, $timeout) {
 app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, backEnd, $localStorage, $rootScope) {
 
   $scope.logout = function() {
-    console.log("Function called!");
     $localStorage.$reset();
     $rootScope.logged = false;
     $state.go('app.home');
@@ -229,7 +228,6 @@ app.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, backEn
       usertype: 'lotuser'
     };
     backEnd.getLogin(login).then(function(res) {
-      console.log(res);
       $localStorage.token = res.data.token;
       $localStorage.user = res.data.user;
       $scope.closeLogin();
@@ -299,7 +297,6 @@ app.controller('GeoController', function($scope, $cordovaGeolocation, backEnd, $
   };
 
   $scope.reset = function() {
-    console.log("This happened!");
     $window.location.reload(true);
     $ionicHistory.clearCache();
     storeInfo.clearData();
@@ -340,10 +337,8 @@ app.controller('OptionsController', function($scope, storeInfo, $state, $ionicMo
     $scope.modal.show();
   };
   $scope.getCar = function() {
-    console.log($scope.requestCarData);
     var theData = storeInfo.getData();
     theData.requestCarInfo = $scope.requestCarData;
-    console.log(theData);
     storeInfo.saveData(theData);
     backEnd.requestCar(theData);
     $timeout(function() {
@@ -368,7 +363,6 @@ app.controller('CheckoutController', function($scope, $state, storeInfo, $http, 
   var transactionData = storeInfo.getData();
   var data = transactionData;
   $scope.pay = function() {
-    console.log($scope.payment.amount);
     var amount = $scope.payment.amount * 100;
     var handler = StripeCheckout.configure({
       key: 'pk_test_ISLIYCpMacLsF9M5isdQ5JiF',
@@ -414,7 +408,6 @@ app.controller('ReviewController',function($scope, backEnd, storeInfo, $state, f
   };
 
   $scope.reviewLot = function() {
-    console.log($scope.review);
     var data = {
       review: $scope.review,
       lotData: lotInfo,
@@ -428,8 +421,11 @@ app.controller('ReviewController',function($scope, backEnd, storeInfo, $state, f
   };
 });
 
-app.controller('PromotionsController', function($scope, $state, $ionicModal) {
-
+app.controller('PromotionsController', function($scope, $state, $ionicModal, backEnd, storeInfo, $localStorage) {
+  var userData = {};
+  backend.getPromotions(userData).then(function(res){
+    $scope.promos = res.data.data;
+  });
 });
 
 app.controller('ThanksController', function($scope, $state, $timeout, storeInfo, $ionicHistory) {
