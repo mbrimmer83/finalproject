@@ -98,6 +98,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
   })
 
+  .state('app.promotions', {
+    url: '/promotions',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/promotions.html',
+        controller: 'PromotionsController'
+      }
+    }
+  })
+
   .state('app.home', {
     url: '/home',
     views: {
@@ -141,6 +151,13 @@ app.factory('backEnd', function($http) {
       return $http({
         method: 'POST',
         url: API + '/review',
+        data: data
+      });
+    },
+    getPromotions: function(data) {
+      return $http({
+        method: 'POST',
+        url: API + '/promotions',
         data: data
       });
     },
@@ -409,6 +426,10 @@ app.controller('ReviewController',function($scope, backEnd, storeInfo, $state, f
     });
     $state.go('app.thanks');
   };
+});
+
+app.controller('PromotionsController', function($scope, $state, $ionicModal) {
+
 });
 
 app.controller('ThanksController', function($scope, $state, $timeout, storeInfo, $ionicHistory) {
